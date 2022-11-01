@@ -1,0 +1,17 @@
+protonvpn_user: "{{ ansible_user_id }}"
+protonvpn_configure_user: true
+
+protonvpn_install_gui: false
+
+protonvpn_default_protocol: "udp"
+protonvpn_killswitch: false
+
+protonvpn_dns_custom: false
+protonvpn_dns_servers: []
+
+protonvpn_netshield: false
+protonvpn_secure_core: false
+protonvpn_vpn_accelerator: true
+protonvpn_alt_routing: true
+protonvpn_moderate_nat: false
+protonvpn_non_standard_ports: false

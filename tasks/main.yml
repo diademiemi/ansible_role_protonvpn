@@ -1,0 +1,66 @@
+---
+- name: Add ProtonVPN Fedora repository
+  become: true
+  ansible.builtin.yum_repository:
+    name: protonvpn
+    description: ProtonVPN Fedora repository
+    baseurl: https://repo.protonvpn.com/fedora-$releasever-stable
+    gpgcheck: true
+    gpgkey: https://repo.protonvpn.com/fedora-$releasever-stable/public_key.asc
+    enabled: true
+  when: ansible_os_family == "RedHat"
+
+- name: Add ProtonVPN Apt key
+  become: true
+  ansible.builtin.apt_key:
+    url: https://repo.protonvpn.com/debian/public_key.asc
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Add Apt repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: deb [arch="all"] https://repo.protonvpn.com/debian stable main
+    state: present
+    filename: protonvpn-stable
+    update_cache: true
+    validate_certs: true
+  when: ansible_os_family == "Debian"
+
+- name: Install ProtonVPN CLI
+  become: true
+  ansible.builtin.package:
+    name: protonvpn-cli
+    state: present
+    update_cache: true
+
+- name: Install ProtonVPN GUI
+  become: true
+  ansible.builtin.package:
+    name: protonvpn-gui
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  when: protonvpn_install_gui
+
+- name: Ensure ProtonVPN configuration directory exists
+  become: true
+  become_user: "{{ protonvpn_user }}"
+  ansible.builtin.file:
+    path: "~/.config/protonvpn/"
+    state: directory
+    mode: 0755
+    owner: "{{ protonvpn_user }}"
+    group: "{{ protonvpn_user }}"
+  when: protonvpn_configure_user
+
+- name: Place ProtonVPN configuration file
+  become: true
+  become_user: "{{ protonvpn_user }}"
+  ansible.builtin.template:
+    src: user_configurations.json.j2
+    dest: ~/.config/protonvpn/user_configurations.json
+    mode: 0644
+    owner: "{{ protonvpn_user }}"
+    group: "{{ protonvpn_user }}"
+  when: protonvpn_configure_user

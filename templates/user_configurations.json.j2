@@ -1,0 +1,21 @@
+{
+    "default_protocol": "{{ protonvpn_default_protocol }}",
+    "killswitch": {{ protonvpn_killswitch | int }},
+    "dns": {
+        "dns_status": {% if protonvpn_dns_custom %}2{% else %}1{% endif %},
+        "custom_dns": [{% for dns in protonvpn_dns_servers %}"{{ dns }}"{% if not loop.last %},{% endif %}{% endfor %}]
+    },
+{# Not supported on Linux yet #}
+    "split_tunneling": {
+        "split_tunneling_status": 0,
+        "ip_list": []
+    },
+    "netshield": {{ protonvpn_netshield | int }},
+    "secure_core": {{ protonvpn_secure_core | int }},
+    "vpn_accelerator": {{ protonvpn_vpn_accelerator | int }},
+    "alternative_routing": {{ protonvpn_alt_routing | int }},
+    "event_notification": 2,
+    "moderate_nat": {{ protonvpn_moderate_nat | int }},
+    "new_brand_info": 1,
+    "non_standard_ports": {{ protonvpn_non_standard_ports | int }}
+}
